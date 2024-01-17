@@ -29,11 +29,7 @@ export class MusicPlayerComponent implements OnInit {
   duration!: number;
   timelineWidth!: number;
   initialMusicPlayerState = {
-    isVideoError: false,
-    isOnline: navigator.onLine,
     isPlaying: false,
-    currentTime: '0:00',
-    duration: '0:00',
   };
 
   constructor(private renderer: Renderer2) {}
