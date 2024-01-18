@@ -88,25 +88,102 @@ h2 {
 
 .button-items {
   margin-left: 180px;
+  .duration-container {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    // font-size: 13px;
+    color: #494b4e;
+    // line-height: 0;
+    font-size: 9pt;
+    float: right;
+    font-family: Arial, Sans-Serif;
+    // flex-grow: 1;
+  }
+  .timeline-container {
+    height: 7px;
+    margin-inline: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    .timeline {
+      //   background-color: rgba(100, 100, 100, 0.5);
+      width: 182px;
+      height: 4px;
+      background: #151518;
+      position: relative;
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        right: calc(100% - var(--preview-position) * 100%);
+        background-color: rgb(150, 150, 150);
+        display: none;
+      }
+      &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        right: calc(100% - var(--progress-position) * 100%);
+        background-color: #ef6dbc;
+        transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .thumb-indicator {
+        --scale: 0;
+        position: absolute;
+        transform: translateX(-50%) scale(var(--scale));
+        height: 200%;
+        top: -50%;
+        left: calc(var(--progress-position) * 100%);
+        background-color: #ef6dbc;
+        border-radius: 50%;
+        transition: transform 150ms ease-in-out;
+        aspect-ratio: 1 / 1;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .timeline-progress {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        right: calc(100% - var(--progress-position) * 100%);
+        background-color: #ef6dbc;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+    }
+    &:hover {
+      .timeline {
+        height: 100%;
+        &::before {
+          display: block;
+        }
+      }
+    }
+  }
+  &:hover {
+    .timeline {
+      .thumb-indicator {
+        --scale: 1;
+      }
+    }
+  }
 }
-
 #slider {
   width: 182px;
   height: 4px;
   background: #151518;
   border-radius: 2px;
   cursor: pointer;
-  div {
+  .timeline-progress {
     width: 4px;
     height: 4px;
     margin-top: 1px;
     background: #ef6dbc;
     border-radius: 2px;
-    &:hover {
-      width: 6px;
-      height: 6px;
-      border-radius: 3px;
-    }
   }
 }
 
@@ -120,26 +197,27 @@ h2 {
 
 .controls {
   margin-top: 20px;
-
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
   svg:nth-child(2) {
     margin-left: 5px;
     margin-right: 5px;
   }
-  .play-pause-btn {
-    .play-icon,
-    .pause-icon {
-      //   height: 26px;
-      //   width: 26px;
-    }
-  }
+
   button {
+    display: flex;
+    width: 30px;
+    height: 30px;
+    justify-content: center;
+    align-items: center;
     background: none;
     border: none;
     cursor: pointer;
     color: inherit;
     padding: 0;
-    // height: 26px;
-    // width: 26px;
+
     font-size: 1.1rem;
     &:hover {
       opacity: 1;
@@ -148,110 +226,40 @@ h2 {
 }
 
 #play {
-  padding: 0 3px;
-  width: 30px;
-  height: 30px;
-  x: 0px;
-  y: 0px;
-  enable-background: new 0 0 25 25;
+  font-size: 30px;
 
-  g {
-    stroke: #fefefe;
-    stroke-width: 1;
-    stroke-miterlimit: 10;
+  color: #fefefe;
 
-    path {
-      fill: #fefefe;
-    }
-  }
   &:hover {
     cursor: pointer;
-    g {
-      stroke: #8f4da9;
-      cursor: pointer;
-
-      path {
-        fill: #9b59b6;
-        cursor: pointer;
-      }
-    }
+    color: #9b59b6;
   }
 }
 
 .step-backward {
-  width: 18px;
-  height: 18px;
-  x: 0px;
-  y: 0px;
-  enable-background: new 0 0 25 25;
-  margin-bottom: 5px;
-
-  g polygon {
-    fill: #fefefe;
-  }
+  font-size: 16px;
+  color: #fefefe;
 }
 
 .step-foreward {
-  width: 18px;
-  height: 18px;
-  x: 0px;
-  y: 0px;
-  enable-background: new 0 0 25 25;
-  margin-bottom: 5px;
-
-  g polygon {
-    fill: #fefefe;
-  }
+  font-size: 16px;
+  color: #fefefe;
 }
 
 #pause {
-  padding: 0 3px;
-  x: 0px;
-  y: 0px;
-
-  enable-background: new 0 0 25 25;
-  width: 30px;
-  height: 30px;
-  //   position: absolute;
-  //   margin-left: -38px;
+  font-size: 18px;
   cursor: pointer;
-
-  rect {
-    fill: white;
+  color: white;
+  &:hover {
+    color: #8f4da9;
   }
 }
 
-#pause:hover rect {
-  fill: #8f4da9;
-}
-
-.step-backward g polygon:hover,
-.step-foreward g polygon:hover {
-  fill: #ef6dbc;
-  cursor: pointer;
-}
-
-.social {
-  text-align: center;
-}
-
-.twitter {
-  color: #bdbdbd;
-  font-family: sans-serif;
-  text-decoration: none;
-
+.step-backward,
+.step-foreward {
   &:hover {
-    color: #ecf0f1;
-  }
-}
-
-.github {
-  color: #bdbdbd;
-  font-family: sans-serif;
-  text-decoration: none;
-
-  &:hover {
-    color: #ecf0f1;
+    color: #ef6dbc;
+    cursor: pointer;
   }
 }
 

@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   OnInit,
@@ -11,79 +12,92 @@ import {
   templateUrl: './music-player.component.html',
   styleUrls: ['./music-player.component.scss'],
 })
-export class MusicPlayerComponent implements OnInit {
-  @ViewChild('musicElement') musicElementRef!: ElementRef;
-  @ViewChild('playButton') playButtonRef!: ElementRef<HTMLElement>;
-  @ViewChild('pauseButton') pauseButtonRef!: ElementRef<HTMLElement>;
-  @ViewChild('playhead') playheadRef!: ElementRef<HTMLElement>;
-  @ViewChild('timeline') timelineRef!: ElementRef<HTMLElement>;
-  @ViewChild('timer') timerRef!: ElementRef<HTMLElement>;
+export class MusicPlayerComponent implements AfterViewInit {
+  @ViewChild('musicElement') musicElementRef!: ElementRef<HTMLAudioElement>;
+  @ViewChild('timelineIndicator') timelineIndicatorRef!: ElementRef;
+  @ViewChild('timelineProgress') timelineProgressRef!: ElementRef;
+  @ViewChild('timeline', { static: true }) timelineRef!: ElementRef;
+  @ViewChild('currentTimeElem') currentTimeElemRef!: ElementRef;
+  @ViewChild('totalTimeElem') totalTimeElemRef!: ElementRef;
 
   musicElement!: HTMLAudioElement;
-  playButton!: HTMLElement;
-  pauseButton!: HTMLElement;
-  playhead!: HTMLElement;
+  timelineIndicator!: HTMLElement;
+  timelineProgress!: HTMLElement;
   timeline!: HTMLElement;
-  timer!: HTMLElement;
-
+  currentTimeElem!: HTMLElement;
+  totalTimeElem!: HTMLElement;
   duration!: number;
   timelineWidth!: number;
   initialMusicPlayerState = {
     isPlaying: false,
+    currentTime: '0:00',
+    duration: '0:00',
   };
-
   constructor(private renderer: Renderer2) {}
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
+    // this.musicElement = this.musicElementRef.nativeElement;
     if (
       this.musicElementRef &&
-      this.playButtonRef &&
-      this.pauseButtonRef &&
-      this.playheadRef &&
+      this.timelineIndicatorRef &&
+      this.currentTimeElemRef &&
+      this.totalTimeElemRef &&
       this.timelineRef &&
-      this.timerRef
+      this.timelineProgressRef
     ) {
       this.musicElement = this.musicElementRef.nativeElement;
-      this.playButton = this.playButtonRef.nativeElement;
-      this.pauseButton = this.pauseButtonRef.nativeElement;
-      this.playhead = this.playheadRef.nativeElement;
       this.timeline = this.timelineRef.nativeElement;
-      this.timer = this.timerRef.nativeElement;
+      this.timelineIndicator = this.timelineIndicatorRef.nativeElement;
+      this.timelineProgress = this.timelineProgressRef.nativeElement;
+      this.currentTimeElem = this.currentTimeElemRef.nativeElement;
+      this.totalTimeElem = this.totalTimeElemRef.nativeElement;
 
-      this.timelineWidth =
-        this.timeline.offsetWidth - this.playhead.offsetWidth;
-
-      this.musicElement.addEventListener(
-        'timeupdate',
-        this.timeUpdate.bind(this),
-        false
-      );
-      this.musicElement.addEventListener(
-        'canplaythrough',
-        this.canPlayThrough.bind(this),
-        false
-      );
-      this.musicElement.addEventListener(
-        'loadedmetadata',
-        this.loadedMetadata.bind(this),
-        false
-      );
-      this.pauseButton.style.display = 'none';
+      console.log(this.musicElement);
     }
   }
 
-  timeUpdate(): void {
-    const playPercent =
-      (this.timelineWidth * this.musicElement.currentTime) / this.duration;
-    this.renderer.setStyle(this.playhead, 'width', playPercent + 'px');
-
-    const secondsIn = Math.floor(
-      (this.musicElement.currentTime / this.duration / 3.5) * 100
+  updateTimeDisplay(): void {
+    this.initialMusicPlayerState.currentTime = this.formatDuration(
+      this.musicElement.currentTime
     );
-    this.timer.innerHTML =
-      secondsIn <= 9 ? `0:0${secondsIn}` : `0:${secondsIn}`;
+  }
+  formatDuration(time: number): string {
+    const hours = Math.floor(time / 3600);
+    const minutes = Math.floor((time % 3600) / 60);
+    const seconds = Math.floor(time % 60);
+
+    const formattedHours = hours > 0 ? `${hours}:` : '';
+    const formattedMinutes = `${
+      minutes < 10 && hours > 0 ? '0' : ''
+    }${minutes}`;
+    const formattedSeconds = `${seconds < 10 ? '0' : ''}${seconds}`;
+
+    return `${formattedHours}${formattedMinutes}:${formattedSeconds}`;
+  }
+  skip(duration: any): void {
+    this.musicElement.currentTime += duration;
   }
 
+  statusBarClick($event: MouseEvent): void {
+    const el = this.timeline;
+    const clickX = $event.offsetX;
+    const totalWidth = el.offsetWidth;
+    const targetPosition = (clickX / totalWidth) * 100;
+    this.musicElement.currentTime = (targetPosition * this.duration) / 100;
+    this.updateTimeline();
+  }
+
+  updateTimeline(): void {
+    const percentComplete =
+      (this.musicElement.currentTime / this.musicElement.duration) * 100;
+
+    // Move the timeline indicator
+    this.renderer.setStyle(
+      this.timelineIndicator,
+      'left',
+      percentComplete + '%'
+    );
+  }
   togglePlayPause(): void {
     this.initialMusicPlayerState.isPlaying =
       !this.initialMusicPlayerState.isPlaying;
@@ -95,29 +109,14 @@ export class MusicPlayerComponent implements OnInit {
     }
   }
 
-  play(): void {
-    if (this.musicElement && this.musicElement.paused) {
-      this.musicElement.play().then(() => {
-        this.renderer.setStyle(this.playButton, 'display', 'none');
-        this.renderer.setStyle(this.pauseButton, 'display', 'block');
-      });
-    }
-  }
-
-  pause(): void {
-    if (this.musicElement && !this.musicElement.paused) {
-      this.musicElement.pause();
-      this.renderer.setStyle(this.playButton, 'display', 'block');
-      this.renderer.setStyle(this.pauseButton, 'display', 'none');
-    }
-  }
-
-  canPlayThrough(): void {
-    this.duration = this.musicElement.duration;
-  }
-
   loadedMetadata(): void {
-    // Handle any additional logic after metadata is loaded.
+    this.initialMusicPlayerState.duration = this.formatDuration(
+      (this.duration = this.musicElement.duration)
+    );
     console.log('Audio metadata loaded. Duration:', this.duration);
+  }
+  onTimeUpdate(): void {
+    this.updateTimeDisplay();
+    this.updateTimeline();
   }
 }
