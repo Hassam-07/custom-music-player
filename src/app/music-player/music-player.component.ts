@@ -22,9 +22,9 @@ export class MusicPlayerComponent implements AfterViewInit {
   @ViewChild('totalTimeElem') totalTimeElemRef!: ElementRef;
   @ViewChild('rangeSlider') rangeSliderRef!: ElementRef;
   // @ViewChild('muteButton') muteButtonRef!: ElementRef;
-  @ViewChild('volumeHighIcon') volumeHighIconRef!: ElementRef;
-  @ViewChild('volumeLowIcon') volumeLowIconRef!: ElementRef;
-  @ViewChild('volumeMutedIcon') volumeMutedIconRef!: ElementRef;
+  // @ViewChild('volumeHighIcon') volumeHighIconRef!: ElementRef;
+  // @ViewChild('volumeLowIcon') volumeLowIconRef!: ElementRef;
+  // @ViewChild('volumeMutedIcon') volumeMutedIconRef!: ElementRef;
   // @ViewChild('videoContainer') videoContainer!: ElementRef;
 
   musicElement!: HTMLAudioElement;
@@ -57,11 +57,7 @@ export class MusicPlayerComponent implements AfterViewInit {
       this.totalTimeElemRef &&
       this.timelineRef &&
       this.timelineProgressRef &&
-      this.volumeMutedIconRef &&
-      this.rangeSliderRef &&
-      // this.muteButtonRef &&
-      this.volumeHighIconRef &&
-      this.volumeLowIconRef
+      this.rangeSliderRef
     ) {
       this.musicElement = this.musicElementRef.nativeElement;
       this.timeline = this.timelineRef.nativeElement;
@@ -70,14 +66,6 @@ export class MusicPlayerComponent implements AfterViewInit {
       this.currentTimeElem = this.currentTimeElemRef.nativeElement;
       this.totalTimeElem = this.totalTimeElemRef.nativeElement;
       this.rangeSlider = this.rangeSliderRef.nativeElement;
-      // this.muteButton = this.muteButtonRef.nativeElement;
-      this.volumeHighIcon = this.volumeHighIconRef.nativeElement;
-      this.volumeMutedIcon = this.volumeMutedIconRef.nativeElement;
-      this.volumeLowIcon = this.volumeLowIconRef.nativeElement;
-
-      // this.musicElement.addEventListener('volumechange', () => {
-      //   this.updateVolume();
-      // });
       this.onVolumeChange();
       console.log(this.musicElement);
     }
@@ -89,7 +77,12 @@ export class MusicPlayerComponent implements AfterViewInit {
 
   forwardSeek(): void {
     const forwardTime = 5; // seconds to seek forward
-    this.musicElement.currentTime += forwardTime;
+    const newTime = this.musicElement.currentTime + forwardTime;
+    if (newTime < this.musicElement.duration) {
+      this.musicElement.currentTime = newTime;
+    } else {
+      this.musicElement.currentTime;
+    }
   }
 
   updateTimeDisplay(): void {
@@ -174,21 +167,6 @@ export class MusicPlayerComponent implements AfterViewInit {
     this.toggleVolumeIcons();
   }
   private toggleVolumeIcons(): void {
-    const { volumeHighIcon, volumeLowIcon, volumeMutedIcon } = this;
-
-    // if (this.musicElement.muted) {
-    //   // Display volume-muted-icon
-    //   this.renderer.setStyle(volumeMutedIcon, 'display', 'block');
-    //   // Hide volume-high-icon and volume-low-icon
-    //   this.renderer.setStyle(volumeHighIcon, 'display', 'none');
-    //   this.renderer.setStyle(volumeLowIcon, 'display', 'none');
-    // } else {
-    //   // Display volume-high-icon
-    //   this.renderer.setStyle(volumeHighIcon, 'display', 'block');
-    //   // Hide volume-muted-icon and volume-low-icon
-    //   this.renderer.setStyle(volumeMutedIcon, 'display', 'none');
-    //   this.renderer.setStyle(volumeLowIcon, 'display', 'none');
-    // }
     if (this.musicElement.muted) {
       this.initialMusicPlayerState.volumeLevel = 'muted';
     } else if (this.musicElement.volume >= 0.5) {
@@ -234,19 +212,13 @@ export class MusicPlayerComponent implements AfterViewInit {
 
     switch (level) {
       case 'muted':
-        this.renderer.setStyle(volumeMutedIcon, 'display', 'block');
-        this.renderer.setStyle(volumeHighIcon, 'display', 'none');
-        this.renderer.setStyle(volumeLowIcon, 'display', 'none');
+        this.initialMusicPlayerState.volumeLevel = 'muted';
         break;
       case 'high':
-        this.renderer.setStyle(volumeHighIcon, 'display', 'block');
-        this.renderer.setStyle(volumeMutedIcon, 'display', 'none');
-        this.renderer.setStyle(volumeLowIcon, 'display', 'none');
+        this.initialMusicPlayerState.volumeLevel = 'high';
         break;
       case 'low':
-        this.renderer.setStyle(volumeLowIcon, 'display', 'block');
-        this.renderer.setStyle(volumeHighIcon, 'display', 'none');
-        this.renderer.setStyle(volumeMutedIcon, 'display', 'none');
+        this.initialMusicPlayerState.volumeLevel = 'low';
         break;
       default:
         break;
