@@ -21,7 +21,7 @@ export class MusicPlayerComponent implements AfterViewInit {
   @ViewChild('currentTimeElem') currentTimeElemRef!: ElementRef;
   @ViewChild('totalTimeElem') totalTimeElemRef!: ElementRef;
   @ViewChild('rangeSlider') rangeSliderRef!: ElementRef;
-  @ViewChild('muteButton') muteButtonRef!: ElementRef;
+  // @ViewChild('muteButton') muteButtonRef!: ElementRef;
   @ViewChild('volumeHighIcon') volumeHighIconRef!: ElementRef;
   @ViewChild('volumeLowIcon') volumeLowIconRef!: ElementRef;
   @ViewChild('volumeMutedIcon') volumeMutedIconRef!: ElementRef;
@@ -34,7 +34,7 @@ export class MusicPlayerComponent implements AfterViewInit {
   currentTimeElem!: HTMLElement;
   totalTimeElem!: HTMLElement;
   rangeSlider!: HTMLElement;
-  muteButton!: HTMLElement;
+  // muteButton!: HTMLElement;
   volumeHighIcon!: HTMLElement;
   volumeLowIcon!: HTMLElement;
   volumeMutedIcon!: HTMLElement;
@@ -59,7 +59,7 @@ export class MusicPlayerComponent implements AfterViewInit {
       this.timelineProgressRef &&
       this.volumeMutedIconRef &&
       this.rangeSliderRef &&
-      this.muteButtonRef &&
+      // this.muteButtonRef &&
       this.volumeHighIconRef &&
       this.volumeLowIconRef
     ) {
@@ -70,7 +70,7 @@ export class MusicPlayerComponent implements AfterViewInit {
       this.currentTimeElem = this.currentTimeElemRef.nativeElement;
       this.totalTimeElem = this.totalTimeElemRef.nativeElement;
       this.rangeSlider = this.rangeSliderRef.nativeElement;
-      this.muteButton = this.muteButtonRef.nativeElement;
+      // this.muteButton = this.muteButtonRef.nativeElement;
       this.volumeHighIcon = this.volumeHighIconRef.nativeElement;
       this.volumeMutedIcon = this.volumeMutedIconRef.nativeElement;
       this.volumeLowIcon = this.volumeLowIconRef.nativeElement;
@@ -81,6 +81,15 @@ export class MusicPlayerComponent implements AfterViewInit {
       this.onVolumeChange();
       console.log(this.musicElement);
     }
+  }
+  backwardSeek(): void {
+    const backwardTime = 5; // seconds to seek backward
+    this.musicElement.currentTime -= backwardTime;
+  }
+
+  forwardSeek(): void {
+    const forwardTime = 5; // seconds to seek forward
+    this.musicElement.currentTime += forwardTime;
   }
 
   updateTimeDisplay(): void {
@@ -167,18 +176,25 @@ export class MusicPlayerComponent implements AfterViewInit {
   private toggleVolumeIcons(): void {
     const { volumeHighIcon, volumeLowIcon, volumeMutedIcon } = this;
 
+    // if (this.musicElement.muted) {
+    //   // Display volume-muted-icon
+    //   this.renderer.setStyle(volumeMutedIcon, 'display', 'block');
+    //   // Hide volume-high-icon and volume-low-icon
+    //   this.renderer.setStyle(volumeHighIcon, 'display', 'none');
+    //   this.renderer.setStyle(volumeLowIcon, 'display', 'none');
+    // } else {
+    //   // Display volume-high-icon
+    //   this.renderer.setStyle(volumeHighIcon, 'display', 'block');
+    //   // Hide volume-muted-icon and volume-low-icon
+    //   this.renderer.setStyle(volumeMutedIcon, 'display', 'none');
+    //   this.renderer.setStyle(volumeLowIcon, 'display', 'none');
+    // }
     if (this.musicElement.muted) {
-      // Display volume-muted-icon
-      this.renderer.setStyle(volumeMutedIcon, 'display', 'block');
-      // Hide volume-high-icon and volume-low-icon
-      this.renderer.setStyle(volumeHighIcon, 'display', 'none');
-      this.renderer.setStyle(volumeLowIcon, 'display', 'none');
+      this.initialMusicPlayerState.volumeLevel = 'muted';
+    } else if (this.musicElement.volume >= 0.5) {
+      this.initialMusicPlayerState.volumeLevel = 'high';
     } else {
-      // Display volume-high-icon
-      this.renderer.setStyle(volumeHighIcon, 'display', 'block');
-      // Hide volume-muted-icon and volume-low-icon
-      this.renderer.setStyle(volumeMutedIcon, 'display', 'none');
-      this.renderer.setStyle(volumeLowIcon, 'display', 'none');
+      this.initialMusicPlayerState.volumeLevel = 'low';
     }
   }
   @HostListener('input', ['$event'])

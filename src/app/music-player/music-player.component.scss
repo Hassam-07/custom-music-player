@@ -56,37 +56,37 @@ h2 {
       display: inline-block;
     }
   }
-  &[data-volume-level="high"] {
-    .video-controls-container {
-      .volume-container {
-        .mute-btn {
-          .volume-high-icon {
-            display: block;
-          }
-        }
-      }
-    }
-  }
-  &[data-volume-level="low"] {
-    .video-controls-container {
-      .volume-container {
-        .mute-btn {
-          .volume-low-icon {
-            display: block;
-          }
-        }
-      }
-    }
-  }
-  &[data-volume-level="muted"] {
-    .video-controls-container {
-      .volume-container {
-        .volume-muted-icon {
-          display: block;
-        }
-      }
-    }
-  }
+  // &[data-volume-level="high"] {
+  //   .video-controls-container {
+  //     .volume-container {
+  //       .mute-btn {
+  //         .volume-high-icon {
+  //           display: block;
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+  // &[data-volume-level="low"] {
+  //   .video-controls-container {
+  //     .volume-container {
+  //       .mute-btn {
+  //         .volume-low-icon {
+  //           display: block;
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+  // &[data-volume-level="muted"] {
+  //   .video-controls-container {
+  //     .volume-container {
+  //       .volume-muted-icon {
+  //         display: block;
+  //       }
+  //     }
+  //   }
+  // }
   .cover {
     position: absolute;
     top: 0;
@@ -266,20 +266,20 @@ h2 {
         display: flex;
         align-items: center;
         // margin-left: 58px;
-        margin-top: 12px;
+        margin-top: 6px;
         // flex-grow: initial;
 
-        width: 12%;
+        // width: 12%;
         .mute-btn {
           width: 20px;
           height: 20px;
-          .volume-high-icon,
-          .volume-low-icon,
-          .volume-muted-icon {
-            width: 100%;
-            height: 100%;
-            color: white;
-          }
+        }
+        .volume-high-icon,
+        .volume-low-icon,
+        .volume-muted-icon {
+          // width: 100%;
+          // height: 100%;
+          color: white;
         }
         &:hover {
           width: 100%;
@@ -333,19 +333,19 @@ h2 {
           }
         }
 
-        .mute-btn {
-          .volume-muted-icon,
-          .volume-low-icon {
-            display: none;
-          }
-          .volume-high-icon {
-            display: block;
-            cursor: pointer;
-          }
-        }
+        // .mute-btn {
+        //   .volume-muted-icon,
+        //   .volume-low-icon {
+        //     display: none;
+        //   }
+        //   .volume-high-icon {
+        //     display: block;
+        //     cursor: pointer;
+        //   }
+        // }
       }
 
-      #play {
+      .play {
         font-size: 30px;
 
         color: #fefefe;
@@ -366,7 +366,7 @@ h2 {
         color: #fefefe;
       }
 
-      #pause {
+      .pause {
         font-size: 18px;
         cursor: pointer;
         color: white;
